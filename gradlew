@@ -1,47 +1,21 @@
-#!/bin/sh
-#
-# Gradle start up script for UN*X
-#
+#!/usr/bin/env sh
 APP_NAME="Gradle"
 APP_BASE_NAME=`basename "$0"`
-GRADLE_OPTS="$GRADLE_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/gradle.icns\""
-DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
-
-# Use the maximum available, or set MAX_FD != -1 to use that value.
+DEFAULT_JVM_OPTS="-Xmx64m -Xms64m"
 MAX_FD="maximum"
-warn () {
-    echo "$*"
-} >&2
-die () {
-    echo
-    echo "$*"
-    echo
-    exit 1
-} >&2
-
-# OS specific support (must be 'true' or 'false').
+warn () { echo "$*"; } >&2
+die () { echo; echo "$*"; echo; exit 1; } >&2
 cygwin=false
 msys=false
 darwin=false
 nonstop=false
 case "`uname`" in
-  CYGWIN* )
-    cygwin=true
-    ;;
-  Darwin* )
-    darwin=true
-    ;;
-  MSYS* | MINGW* )
-    msys=true
-    ;;
-  NONSTOP* )
-    nonstop=true
-    ;;
+  CYGWIN* ) cygwin=true ;;
+  Darwin* ) darwin=true ;;
+  MSYS* | MINGW* ) msys=true ;;
+  NONSTOP* ) nonstop=true ;;
 esac
-
-CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
-
-# Determine the Java command to use to start the JVM.
+CLASSPATH=`dirname "$0"`/gradle/wrapper/gradle-wrapper.jar
 if [ -n "$JAVA_HOME" ] ; then
     if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
         JAVACMD="$JAVA_HOME/jre/sh/java"
@@ -53,10 +27,8 @@ if [ -n "$JAVA_HOME" ] ; then
     fi
 else
     JAVACMD="java"
-    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found"
+    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH."
 fi
-
-# Increase the maximum file descriptors if we can.
 if [ "$cygwin" = "false" -a "$darwin" = "false" -a "$nonstop" = "false" ] ; then
     MAX_FD_LIMIT=`ulimit -H -n`
     if [ $? -eq 0 ] ; then
@@ -64,20 +36,23 @@ if [ "$cygwin" = "false" -a "$darwin" = "false" -a "$nonstop" = "false" ] ; then
             MAX_FD="$MAX_FD_LIMIT"
         fi
         ulimit -n $MAX_FD
+        if [ $? -ne 0 ] ; then
+            warn "Could not set maximum file descriptor limit: $MAX_FD"
+        fi
+    else
+        warn "Could not query maximum file descriptor limit: $MAX_FD_LIMIT"
     fi
 fi
-
-# For Darwin, add options to specify how the application appears in the dock
-if $darwin; then
-    GRADLE_OPTS="$GRADLE_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/gradle.icns\""
+if $darwin ; then
+    GRADLE_OPTS="$GRADLE_OPTS -Xdock:name=$APP_NAME"
 fi
-
-# Collect all arguments for the java command
-APP_HOME=`pwd`
-exec "$JAVACMD" \
-  $DEFAULT_JVM_OPTS \
-  $JAVA_OPTS \
-  $GRADLE_OPTS \
-  "-Dorg.gradle.appname=$APP_BASE_NAME" \
-  -classpath "$CLASSPATH" \
-  org.gradle.wrapper.GradleWrapperMain "$@"
+if $cygwin ; then
+    APP_HOME=`cygpath --path --mixed "$APP_HOME"`
+    CLASSPATH=`cygpath --path --mixed "$CLASSPATH"`
+    JAVACMD=`cygpath --unix "$JAVACMD"`
+fi
+APP_HOME=`pwd -P`
+exec "$JAVACMD" $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS \
+    "-Dorg.gradle.appname=$APP_BASE_NAME" \
+    -classpath "$CLASSPATH" \
+    org.gradle.wrapper.GradleWrapperMain "$@"
